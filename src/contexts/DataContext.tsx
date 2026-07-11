@@ -21,7 +21,7 @@ export interface Student {
     semester: number;
     batch: string;
     birthDate?: string;
-    branch:string,
+    branch: string;
   };
 }
 
@@ -211,48 +211,7 @@ interface DataContextType {
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
-// --- Mock Datasets ---
-
-const mockStudents: Student[] = [
-  {
-    id: "1",
-    name: "Demo Student One",
-    rollNumber: "24DEMO001",
-    email: "student1@example.edu",
-    cgpa: 9.06,
-    profile: {
-      phoneNumber: "0000000001",
-      address: "Demo Hostel, Room 101",
-      dateOfBirth: "2003-05-15",
-      gender: "Prefer not to say",
-      department: "Mathematics & Computing",
-      year: 1,
-      semester: 2,
-      batch: "2024-2028",
-      birthDate: "15 May",
-      branch:"Mathematics and Computing",
-    },
-  },
-];
-
-const mockTeachers: Teacher[] = [
-  { id: "1", name: "Demo Teacher One", email: "teacher1@example.edu", department: "Maths Dept", subjects: [] }
-];
-
-const mockMessages: Message[] = [
-  {
-    id: "1",
-    senderId: "1",
-    senderName: "Demo Student One",
-    senderType: "student",
-    receiverId: "1",
-    receiverName: "Demo Teacher One",
-    receiverType: "teacher",
-    content: "Good afternoon, I had a question about the upcoming project deadline.",
-    timestamp: "2024-11-05T14:30:00",
-    read: false,
-  },
-];
+// --- Active Static Datasets ---
 
 const mockNotifications: Notification[] = [
   {
@@ -291,7 +250,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [students, setStudents] = useState<Student[]>([]);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const { user } = useAuth();
-  
+
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [semesterResults, setSemesterResults] = useState<SemesterResult[]>([]);
   const [minorResults, setMinorResults] = useState<MinorResult[]>([]);
@@ -300,13 +259,13 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [isLoadingAssignments, setIsLoadingAssignments] = useState<boolean>(true);
 
   const [attendance, setAttendance] = useState<Attendance[]>([]);
-  const [attendanceSummary, setAttendanceSummary] = useState<AttendanceSummary[]>([]);
+  const [attendanceSummary] = useState<AttendanceSummary[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
   const [timetable] = useState<TimeTable>(mockTimetable);
   const [semesterGrades, setSemesterGrades] = useState<SemesterGrade[]>(mockSemesterGrades);
 
-  // 1. Fetch Subjects Safely
+  // 1. Fetch Subjects
   useEffect(() => {
     const fetchSubjects = async () => {
       const { data, error } = await supabase.from("subjects").select("*");
@@ -329,11 +288,11 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     };
     fetchSubjects();
   }, []);
-// 1b. Fetch Unified Profiles and Chat Messages Safely from Supabase
+
+  // 1b. Fetch Profiles and Messages from Supabase
   useEffect(() => {
     const fetchProfilesAndMessages = async () => {
       try {
-        // 1. Fetch profiles table to separate teachers and students dynamically
         const { data: profilesData, error: profilesError } = await supabase
           .from("profiles")
           .select("*");
@@ -341,7 +300,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         if (profilesError) throw profilesError;
 
         if (profilesData) {
-          // Map profiles data safely to match your Teacher[] type interface structure
           const mappedTeachers: Teacher[] = profilesData
             .filter((p) => p.role === "teacher")
             .map((t) => ({
@@ -349,11 +307,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
               name: String(t.name || ""),
               email: String(t.email || ""),
               department: String(t.department || "Academic Faculty"),
-              role: "teacher",
-              subjects:[],
+              subjects: [],
             }));
 
-          // Map profiles data safely to match your Student[] type interface structure
           const mappedStudents: Student[] = profilesData
             .filter((p) => p.role === "student")
             .map((s) => ({
@@ -361,27 +317,24 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
               name: String(s.name || ""),
               rollNumber: String(s.roll_number || s.id.slice(0, 6)),
               email: String(s.email || ""),
-              department: String(s.department || "General"),
-              semester: Number(s.semester || 1),
-              cgpa:0,
+              cgpa: 0,
               profile: {
-      phoneNumber: "",
-      address: "",
-      dateOfBirth: "",
-      gender: "",
-      department: String(s.department || "General"),
-      year: 1,
-      semester: Number(s.semester || 1),
-      batch: "",
-      branch: String(s.branch || "Mathematics"),
-    },
+                phoneNumber: "",
+                address: "",
+                dateOfBirth: "",
+                gender: "",
+                department: String(s.department || "General"),
+                year: 1,
+                semester: Number(s.semester || 1),
+                batch: "",
+                branch: String(s.branch || "Mathematics"),
+              },
             }));
 
           setTeachers(mappedTeachers);
           setStudents(mappedStudents);
         }
 
-        // 2. Fetch live messages from your renamed camelCase columns
         const { data: messagesData, error: messagesError } = await supabase
           .from("chat_messages")
           .select("*")
@@ -399,7 +352,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
     fetchProfilesAndMessages();
   }, []);
-  // 2. Fetch Assignments Safely (Resolving Database snake_case fields)
+
+  // 2. Fetch Assignments
   useEffect(() => {
     const fetchLiveAssignments = async () => {
       try {
@@ -437,7 +391,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     fetchLiveAssignments();
   }, []);
 
-  // 3. Fetch Semester Results Safely
+  // 3. Fetch Semester Results
   useEffect(() => {
     const fetchSemesterResults = async () => {
       if (!user) {
@@ -467,7 +421,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
           academicYear: String(row.academic_year || ""),
           sgpa: Number(row.sgpa || 0),
           cgpa: Number(row.cgpa || 0),
-          results: Array.isArray(row.exam_results) 
+          results: Array.isArray(row.exam_results)
             ? row.exam_results.map((er) => ({
                 subjectCode: String(er.subject_code || ""),
                 subjectName: String(er.subject_name || ""),
@@ -483,7 +437,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     fetchSemesterResults();
   }, [user]);
 
-  // 4. Fetch Minor Exam Results Safely
+  // 4. Fetch Minor Exam Results
   useEffect(() => {
     const fetchMinorResults = async () => {
       if (!user) {
@@ -559,41 +513,36 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const sendMessage = async (message: Omit<Message, "id" | "timestamp" | "read">) => {
-  try {
-    // 1. Insert the message data directly into your Supabase table
-    const { data, error } = await supabase
-      .from("chat_messages")
-      .insert([
-        {
-          senderId: message.senderId,
-          receiverId: message.receiverId,
-          content: message.content,
-          // Let Supabase handle 'id', 'timestamp', and 'read' defaults automatically
-        }
-      ])
-      .select() // Tells Supabase to return the newly created row data
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from("chat_messages")
+        .insert([
+          {
+            senderId: message.senderId,
+            receiverId: message.receiverId,
+            content: message.content,
+          }
+        ])
+        .select()
+        .single();
 
-    if (error) throw error;
+      if (error) throw error;
 
-    // 2. Append the official saved record from the database to your local state
-    if (data) {
-      setMessages((prev) => [...prev, data as Message]);
-      toast.success("Message sent successfully!");
+      if (data) {
+        setMessages((prev) => [...prev, data as Message]);
+        toast.success("Message sent successfully!");
+      }
+    } catch (error: any) {
+      console.error("Error sending message:", error);
+      toast.error("Failed to send message. Please try again.");
     }
-  } catch (error: any) {
-    console.error("Error sending message:", error);
-    toast.error("Failed to send message. Please try again.");
-  }
-};
+  };
 
   const markMessageAsRead = async (messageId: string) => {
-    // 1. Optimistically update local state immediately for a fast UI feel
     setMessages((prev) =>
       prev.map((msg) => (msg.id === messageId ? { ...msg, read: true } : msg))
     );
 
-    // 2. Update the row permanently inside your Supabase backend
     try {
       await supabase
         .from("chat_messages")
@@ -746,4 +695,3 @@ export const useData = () => {
   if (!context) throw new Error("useData must be used within a DataProvider");
   return context;
 };
-

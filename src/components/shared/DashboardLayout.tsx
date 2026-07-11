@@ -17,7 +17,6 @@ import {
   BarChart3, 
   Clock, 
   FileBarChart2,
-  BookOpen,
   Mail
 } from "lucide-react";
 
@@ -38,7 +37,6 @@ export default function DashboardLayout({
   const { user, logout } = useAuth();
   const [activeItem, setActiveItem] = useState<string | null>(null);
 
-  // Read .type safely from your auth context
   const userType = user?.type || "student";
   const isStudent = userType === "student";
 
@@ -48,7 +46,6 @@ export default function DashboardLayout({
       : "U";
   }, [user?.name]);
 
-  // Wrapped in useMemo to prevent re-creation loops
   const studentNavItems = useMemo(() => [
     { name: "Dashboard", path: "/student-dashboard", icon: <BarChart3 className="mr-2 h-4 w-4" /> },
     { name: "Timetable", path: "/student-dashboard/timetable", icon: <Clock className="mr-2 h-4 w-4" /> },
@@ -69,11 +66,9 @@ export default function DashboardLayout({
 
   const navItems = isStudent ? studentNavItems : teacherNavItems;
 
-  // Track and update selection matching paths cleanly
   useEffect(() => {
     const currentPath = location.pathname;
     
-    // Find item that matches the URL path exactly or handles deep nesting links safely
     const matchingItem = navItems.find((item) => {
       if (item.path === "/student-dashboard" || item.path === "/teacher-dashboard") {
         return currentPath === item.path;
