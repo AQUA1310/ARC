@@ -63,3 +63,249 @@ npm install
 
 # 4. Initialize development compiler server
 npm run dev
+```
+CampusErp
+├─ components.json
+├─ eslint.config.js
+├─ index.html
+├─ package-lock.json
+├─ package.json
+├─ postcss.config.js
+├─ public
+│  ├─ favicon.ico
+│  ├─ logo.png
+│  ├─ lovable-uploads
+│  │  ├─ 01aa3e2d-72b1-482f-81a3-5878ef282949.png
+│  │  ├─ 7de97c84-fdc4-4add-a871-6b9b5f6fd8dd.png
+│  │  ├─ a002a62c-c2a6-4e5c-9728-682983b115c4.png
+│  │  ├─ b82fdcac-d78c-40c5-93da-57537fc9ce5a.png
+│  │  ├─ e1ec4d14-9c17-4973-9868-b2e1f7f239b0.png
+│  │  └─ f0db7aa5-f112-4e07-b137-5f66d3368625.png
+│  ├─ placeholder.svg
+│  └─ robots.txt
+├─ README.md
+├─ src
+│  ├─ App.css
+│  ├─ App.tsx
+│  ├─ components
+│  │  ├─ auth
+│  │  │  ├─ LoginForm.tsx
+│  │  │  └─ SignupForm.tsx
+│  │  ├─ shared
+│  │  │  ├─ DashboardLayout.tsx
+│  │  │  └─ ProtectedRoute.tsx
+│  │  └─ ui
+│  │     ├─ accordion.tsx
+│  │     ├─ alert-dialog.tsx
+│  │     ├─ alert.tsx
+│  │     ├─ aspect-ratio.tsx
+│  │     ├─ avatar.tsx
+│  │     ├─ badge.tsx
+│  │     ├─ breadcrumb.tsx
+│  │     ├─ button.tsx
+│  │     ├─ calendar.tsx
+│  │     ├─ card.tsx
+│  │     ├─ carousel.tsx
+│  │     ├─ chart.tsx
+│  │     ├─ checkbox.tsx
+│  │     ├─ collapsible.tsx
+│  │     ├─ command.tsx
+│  │     ├─ context-menu.tsx
+│  │     ├─ dialog.tsx
+│  │     ├─ drawer.tsx
+│  │     ├─ dropdown-menu.tsx
+│  │     ├─ form.tsx
+│  │     ├─ hover-card.tsx
+│  │     ├─ input-otp.tsx
+│  │     ├─ input.tsx
+│  │     ├─ label.tsx
+│  │     ├─ menubar.tsx
+│  │     ├─ navigation-menu.tsx
+│  │     ├─ pagination.tsx
+│  │     ├─ popover.tsx
+│  │     ├─ progress.tsx
+│  │     ├─ radio-group.tsx
+│  │     ├─ resizable.tsx
+│  │     ├─ scroll-area.tsx
+│  │     ├─ select.tsx
+│  │     ├─ separator.tsx
+│  │     ├─ sheet.tsx
+│  │     ├─ sidebar.tsx
+│  │     ├─ skeleton.tsx
+│  │     ├─ slider.tsx
+│  │     ├─ sonner.tsx
+│  │     ├─ switch.tsx
+│  │     ├─ table.tsx
+│  │     ├─ tabs.tsx
+│  │     ├─ textarea.tsx
+│  │     ├─ toast.tsx
+│  │     ├─ toaster.tsx
+│  │     ├─ toggle-group.tsx
+│  │     ├─ toggle.tsx
+│  │     ├─ tooltip.tsx
+│  │     └─ use-toast.ts
+│  ├─ contexts
+│  │  └─ DataContext.tsx
+│  ├─ hooks
+│  │  ├─ use-mobile.tsx
+│  │  ├─ use-toast.ts
+│  │  └─ useAuth.tsx
+│  ├─ index.css
+│  ├─ lib
+│  │  ├─ supabase.ts
+│  │  └─ utils.ts
+│  ├─ main.tsx
+│  ├─ pages
+│  │  ├─ Index.tsx
+│  │  ├─ NotFound.tsx
+│  │  ├─ Signup.tsx
+│  │  ├─ student
+│  │  │  ├─ Assignments.tsx
+│  │  │  ├─ Attendance.tsx
+│  │  │  ├─ Chat.tsx
+│  │  │  ├─ Dashboard.tsx
+│  │  │  ├─ Results.tsx
+│  │  │  └─ Timetable.tsx
+│  │  └─ teacher
+│  │     ├─ Assignments.tsx
+│  │     ├─ Attendance.tsx
+│  │     ├─ Chat.tsx
+│  │     ├─ Dashboard.tsx
+│  │     ├─ Results.tsx
+│  │     └─ Students.tsx
+│  ├─ styles
+│  │  └─ progress.css
+│  └─ vite-env.d.ts
+├─ supabaseClient.js
+├─ tailwind.config.ts
+├─ tailwind.config.zip
+├─ tsconfig.app.json
+├─ tsconfig.json
+├─ tsconfig.node.json
+├─ vercel.json
+└─ vite.config.ts
+
+```
+```
+CampusErp
+├─ components.json
+├─ eslint.config.js
+├─ index.html
+├─ package-lock.json
+├─ package.json
+├─ postcss.config.js
+├─ public
+│  ├─ favicon.ico
+│  ├─ logo.png
+│  ├─ lovable-uploads
+│  │  ├─ 01aa3e2d-72b1-482f-81a3-5878ef282949.png
+│  │  ├─ 7de97c84-fdc4-4add-a871-6b9b5f6fd8dd.png
+│  │  ├─ a002a62c-c2a6-4e5c-9728-682983b115c4.png
+│  │  ├─ b82fdcac-d78c-40c5-93da-57537fc9ce5a.png
+│  │  ├─ e1ec4d14-9c17-4973-9868-b2e1f7f239b0.png
+│  │  └─ f0db7aa5-f112-4e07-b137-5f66d3368625.png
+│  ├─ placeholder.svg
+│  └─ robots.txt
+├─ README.md
+├─ src
+│  ├─ App.css
+│  ├─ App.tsx
+│  ├─ components
+│  │  ├─ auth
+│  │  │  ├─ LoginForm.tsx
+│  │  │  └─ SignupForm.tsx
+│  │  ├─ shared
+│  │  │  ├─ DashboardLayout.tsx
+│  │  │  └─ ProtectedRoute.tsx
+│  │  └─ ui
+│  │     ├─ accordion.tsx
+│  │     ├─ alert-dialog.tsx
+│  │     ├─ alert.tsx
+│  │     ├─ aspect-ratio.tsx
+│  │     ├─ avatar.tsx
+│  │     ├─ badge.tsx
+│  │     ├─ breadcrumb.tsx
+│  │     ├─ button.tsx
+│  │     ├─ calendar.tsx
+│  │     ├─ card.tsx
+│  │     ├─ carousel.tsx
+│  │     ├─ chart.tsx
+│  │     ├─ checkbox.tsx
+│  │     ├─ collapsible.tsx
+│  │     ├─ command.tsx
+│  │     ├─ context-menu.tsx
+│  │     ├─ dialog.tsx
+│  │     ├─ drawer.tsx
+│  │     ├─ dropdown-menu.tsx
+│  │     ├─ form.tsx
+│  │     ├─ hover-card.tsx
+│  │     ├─ input-otp.tsx
+│  │     ├─ input.tsx
+│  │     ├─ label.tsx
+│  │     ├─ menubar.tsx
+│  │     ├─ navigation-menu.tsx
+│  │     ├─ pagination.tsx
+│  │     ├─ popover.tsx
+│  │     ├─ progress.tsx
+│  │     ├─ radio-group.tsx
+│  │     ├─ resizable.tsx
+│  │     ├─ scroll-area.tsx
+│  │     ├─ select.tsx
+│  │     ├─ separator.tsx
+│  │     ├─ sheet.tsx
+│  │     ├─ sidebar.tsx
+│  │     ├─ skeleton.tsx
+│  │     ├─ slider.tsx
+│  │     ├─ sonner.tsx
+│  │     ├─ switch.tsx
+│  │     ├─ table.tsx
+│  │     ├─ tabs.tsx
+│  │     ├─ textarea.tsx
+│  │     ├─ toast.tsx
+│  │     ├─ toaster.tsx
+│  │     ├─ toggle-group.tsx
+│  │     ├─ toggle.tsx
+│  │     ├─ tooltip.tsx
+│  │     └─ use-toast.ts
+│  ├─ contexts
+│  │  └─ DataContext.tsx
+│  ├─ hooks
+│  │  ├─ use-mobile.tsx
+│  │  ├─ use-toast.ts
+│  │  └─ useAuth.tsx
+│  ├─ index.css
+│  ├─ lib
+│  │  ├─ supabase.ts
+│  │  └─ utils.ts
+│  ├─ main.tsx
+│  ├─ pages
+│  │  ├─ Index.tsx
+│  │  ├─ NotFound.tsx
+│  │  ├─ Signup.tsx
+│  │  ├─ student
+│  │  │  ├─ Assignments.tsx
+│  │  │  ├─ Attendance.tsx
+│  │  │  ├─ Chat.tsx
+│  │  │  ├─ Dashboard.tsx
+│  │  │  ├─ Results.tsx
+│  │  │  └─ Timetable.tsx
+│  │  └─ teacher
+│  │     ├─ Assignments.tsx
+│  │     ├─ Attendance.tsx
+│  │     ├─ Chat.tsx
+│  │     ├─ Dashboard.tsx
+│  │     ├─ Results.tsx
+│  │     └─ Students.tsx
+│  ├─ styles
+│  │  └─ progress.css
+│  └─ vite-env.d.ts
+├─ supabaseClient.js
+├─ tailwind.config.ts
+├─ tailwind.config.zip
+├─ tsconfig.app.json
+├─ tsconfig.json
+├─ tsconfig.node.json
+├─ vercel.json
+└─ vite.config.ts
+
+```
