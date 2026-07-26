@@ -39,21 +39,25 @@ export default function Index() {
       return;
     }
 
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", authData.user.id)
-      .single();
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
-    if (profileError || !profile) {
-      toast.error("Could not load profile");
-      setIsSubmitting(false);
-      return;
-    }
+const res = await fetch(`${API_URL}/api/profile`, {
+  headers: {
+    'Authorization': `Bearer ${authData.session.access_token}`
+  }
+});
 
-    toast.success("Login successful!");
-    navigate(profile.role === "student" ? "/student-dashboard" : "/teacher-dashboard");
-    setIsSubmitting(false);
+if (!res.ok) {
+  toast.error("Could not load profile");
+  setIsSubmitting(false);
+  return;
+}
+
+const profile = await res.json();
+
+toast.success("Login successful!");
+navigate(profile.type === "student" ? "/student-dashboard" : "/teacher-dashboard");
+setIsSubmitting(false);
   };
 
   return (

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
 import type { Session } from "@supabase/supabase-js";
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 type UserType = {
   id: string;
@@ -27,41 +28,30 @@ const AuthContext = createContext<AuthContextType>({
   isLoading: true,
 });
 
+
 async function loadUserProfile(session: Session): Promise<UserType> {
   try {
-    const { data: profile, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", session.user.id)
-      .maybeSingle();
+    const res = await fetch(`${API_URL}/api/profile`, {
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`
+      }
+    });
 
-    if (error) {
-      console.error("Error loading user profile:", error);
-    }
-
-    if (!profile) {
-      // Automatic profile fallback generation for authenticated Google Auth routines
+    if (res.status === 404) {
+      // No profile exists yet — fall back to the same auto-creation logic as before
       const emailLower = session.user.email?.toLowerCase().trim() || "";
       const studentEmailRegex = /^([a-zA-Z]{2})((21|22|23|24)ma[a-zA-Z0-9]+)@student\.nitw\.ac\.in$/;
       const match = emailLower.match(studentEmailRegex);
 
       if (match) {
-        const rollNumber = match[2].toUpperCase(); 
-        const name =
-          session.user.user_metadata?.full_name ||
-          session.user.user_metadata?.name ||
-          "Anonymous Student";
-        const department = "Mathematics";
+        const rollNumber = match[2].toUpperCase();
+        const name = session.user.user_metadata?.full_name || session.user.user_metadata?.name || "Anonymous Student";
 
+        // Still use Supabase client directly for this INSERT — it's a one-time onboarding action,
+        // and RLS already correctly scopes it to the logged-in user's own row
         const { data: newProfile, error: insertError } = await supabase
           .from("profiles")
-          .insert({
-            id: session.user.id,
-            name: name,
-            role: "student",
-            roll_number: rollNumber,
-            department: department
-          })
+          .insert({ id: session.user.id, name, role: "student", roll_number: rollNumber })
           .select()
           .single();
 
@@ -76,21 +66,43 @@ async function loadUserProfile(session: Session): Promise<UserType> {
           name: newProfile.name,
           email: emailLower,
           rollNumber: newProfile.roll_number,
-          department: newProfile.department
+        };
+      }
+      console.error("No profile found yet — retrying once in case creation is still in progress...");
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      const retryRes = await fetch(`${API_URL}/api/profile`, {
+        headers: { 'Authorization': `Bearer ${session.access_token}` }
+      });
+
+      if (retryRes.ok) {
+        const retryProfile = await retryRes.json();
+        return {
+          id: retryProfile.id,
+          type: retryProfile.type,
+          name: retryProfile.name,
+          email: retryProfile.email,
+          rollNumber: retryProfile.rollNumber,
         };
       }
 
       console.error("Profile records absent; unauthorized access configuration.");
       return null;
     }
+      
 
+    if (!res.ok) {
+      console.error("Backend error fetching profile:", res.status);
+      return null;
+    }
+
+    const profile = await res.json();
     return {
-      id: session.user.id,
-      type: profile.role,
+      id: profile.id,
+      type: profile.type,
       name: profile.name,
-      email: session.user.email ?? "",
-      rollNumber: profile.roll_number ?? undefined,
-      department: profile.department ?? undefined,
+      email: profile.email,
+      rollNumber: profile.rollNumber,
     };
   } catch (err) {
     console.error("Unexpected error fetching profile:", err);

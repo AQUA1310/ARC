@@ -292,63 +292,63 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   // 1b. Fetch Profiles and Messages from Supabase
   useEffect(() => {
     const fetchProfilesAndMessages = async () => {
-      try {
-        const { data: profilesData, error: profilesError } = await supabase
-          .from("profiles")
-          .select("*");
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
 
-        if (profilesError) throw profilesError;
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const headers = { 'Authorization': `Bearer ${session.access_token}` };
 
-        if (profilesData) {
-          const mappedTeachers: Teacher[] = profilesData
-            .filter((p) => p.role === "teacher")
-            .map((t) => ({
-              id: String(t.id),
-              name: String(t.name || ""),
-              email: String(t.email || ""),
-              department: String(t.department || "Academic Faculty"),
-              subjects: [],
-            }));
+    const teachersRes = await fetch(`${API_URL}/api/profiles/teachers`, { headers });
+    const teachersData = teachersRes.ok ? await teachersRes.json() : [];
 
-          const mappedStudents: Student[] = profilesData
-            .filter((p) => p.role === "student")
-            .map((s) => ({
-              id: String(s.id),
-              name: String(s.name || ""),
-              rollNumber: String(s.roll_number || s.id.slice(0, 6)),
-              email: String(s.email || ""),
-              cgpa: 0,
-              profile: {
-                phoneNumber: "",
-                address: "",
-                dateOfBirth: "",
-                gender: "",
-                department: String(s.department || "General"),
-                year: 1,
-                semester: Number(s.semester || 1),
-                batch: "",
-                branch: String(s.branch || "Mathematics"),
-              },
-            }));
+    const mappedTeachers: Teacher[] = teachersData.map((t: any) => ({
+      id: String(t.id),
+      name: String(t.name || ""),
+      email: String(t.email || ""),
+      department: String(t.department || "Academic Faculty"),
+      subjects: [],
+    }));
 
-          setTeachers(mappedTeachers);
-          setStudents(mappedStudents);
-        }
+    const studentsRes = await fetch(`${API_URL}/api/profiles/students`, { headers });
+    const studentsData = studentsRes.ok ? await studentsRes.json() : [];
 
-        const { data: messagesData, error: messagesError } = await supabase
-          .from("chat_messages")
-          .select("*")
-          .order("timestamp", { ascending: true });
+    const mappedStudents: Student[] = studentsData.map((s: any) => ({
+      id: String(s.id),
+      name: String(s.name || ""),
+      rollNumber: String(s.roll_number || s.id.slice(0, 6)),
+      email: String(s.email || ""),
+      cgpa: 0,
+      profile: {
+        phoneNumber: "",
+        address: "",
+        dateOfBirth: "",
+        gender: "",
+        department: String(s.department || "General"),
+        year: 1,
+        semester: Number(s.semester || 1),
+        batch: "",
+        branch: String(s.branch || "Mathematics"),
+      },
+    }));
 
-        if (messagesError) throw messagesError;
+    setTeachers(mappedTeachers);
+    setStudents(mappedStudents);
 
-        if (messagesData) {
-          setMessages(messagesData as Message[]);
-        }
-      } catch (err) {
-        console.error("Failed loading chat ecosystem from Supabase:", err);
-      }
-    };
+    const { data: messagesData, error: messagesError } = await supabase
+      .from("chat_messages")
+      .select("*")
+      .order("timestamp", { ascending: true });
+
+    if (messagesError) throw messagesError;
+
+    if (messagesData) {
+      setMessages(messagesData as Message[]);
+    }
+  } catch (err) {
+    console.error("Failed loading chat ecosystem from Supabase:", err);
+  }
+};
 
     fetchProfilesAndMessages();
   }, []);

@@ -21,7 +21,7 @@ async function checkAuth(req, res, next) {
         );
 
         if (result.rows.length === 0) {
-            return res.status(403).json({ error: 'No profile found for this user' });
+            return res.status(404).json({ error: 'No profile found for this user' });
         }
 
         req.user = {

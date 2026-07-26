@@ -52,6 +52,7 @@ export default function SignupForm() {
     setIsLoading(true);
 
     const emailLower = formData.email.toLowerCase().trim();
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
     // Step 1: Validate Student Email ID structure and department code
     if (role === "student") {
@@ -63,21 +64,16 @@ export default function SignupForm() {
       }
 
       // Step 2: Check for duplicate roll numbers
-      const { data: existingRoll, error: rollCheckError } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("roll_number", formData.rollNumber.trim().toUpperCase())
-        .maybeSingle();
+const rollCheckRes = await fetch(
+  `${API_URL}/api/profile/check-roll/${formData.rollNumber.trim().toUpperCase()}`
+);
+const rollCheckData = await rollCheckRes.json();
 
-      if (rollCheckError) {
-        console.error("Roll check database error:", rollCheckError);
-      }
-
-      if (existingRoll) {
-        toast.error("A student account with this Roll Number already exists!");
-        setIsLoading(false);
-        return;
-      }
+if (rollCheckData.exists) {
+  toast.error("A student account with this Roll Number already exists!");
+  setIsLoading(false);
+  return;
+}
     }
 
     // Step 3: Validate Teacher against the whitelisted array
@@ -102,19 +98,25 @@ export default function SignupForm() {
     }
 
     // Step 5: Create matching profile row
-    const { error: profileError } = await supabase.from("profiles").insert({
-      id: authData.user.id,
-      name: formData.name,
-      role: role,
-      roll_number: role === "student" ? formData.rollNumber.trim().toUpperCase() : null,
-      branch: role === "student" ? formData.branch || "Mathematics" : "Mathematics",
-    });
+    const createProfileRes = await fetch(`${API_URL}/api/profile`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${authData.session.access_token}`
+  },
+  body: JSON.stringify({
+    name: formData.name,
+    role: role,
+    rollNumber: role === "student" ? formData.rollNumber.trim().toUpperCase() : null,
+    branch: role === "student" ? (formData.branch || "Mathematics") : "Mathematics"
+  })
+});
 
-    if (profileError) {
-      toast.error("Account created, but profile setup failed: " + profileError.message);
-      setIsLoading(false);
-      return;
-    }
+if (!createProfileRes.ok) {
+  toast.error("Account created, but profile setup failed.");
+  setIsLoading(false);
+  return;
+}
 
     toast.success("Account created! Please log in.");
     navigate("/");
