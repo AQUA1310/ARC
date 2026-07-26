@@ -118,7 +118,7 @@ if (!createProfileRes.ok) {
   return;
 }
 
-    toast.success("Account created! Please log in.");
+    toast.success("Account created! You are now logged in.");
     navigate("/");
     setIsLoading(false);
   };
